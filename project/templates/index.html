@@ -1,0 +1,71 @@
+<h2>Multi-PDF RAG Assistant</h2>
+
+<!-- UPLOAD SECTION -->
+<h3>Upload PDFs</h3>
+
+<input type="file" id="pdfs" multiple>
+<button onclick="upload()">Upload</button>
+
+<p id="msg"></p>
+
+<hr>
+
+<!-- QUESTION SECTION -->
+<h3>Ask From PDFs</h3>
+
+<input id="q" style="width:400px" placeholder="Ask anything from uploaded PDFs">
+
+<button onclick="ask()">Ask</button>
+
+<h3>Answer:</h3>
+
+<pre id="ans" style="
+  background:#f3f3f3;
+  padding:10px;
+  white-space:pre-wrap">
+</pre>
+
+
+<script>
+
+async function upload(){
+
+ let files = document.getElementById("pdfs").files
+
+ let fd = new FormData()
+
+ for(let f of files){
+   fd.append("pdfs", f)
+ }
+
+ let r = await fetch("/upload", {
+    method:"POST",
+    body:fd
+ })
+
+ let d = await r.json()
+
+ document.getElementById("msg").innerText =
+    d.message
+}
+
+
+async function ask(){
+
+ let q = document.getElementById("q").value
+
+ let r = await fetch("/ask", {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify({question:q})
+ })
+
+ let d = await r.json()
+
+ document.getElementById("ans").innerText =
+     d.answer
+}
+
+</script>
